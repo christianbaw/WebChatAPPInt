@@ -1,8 +1,107 @@
-﻿@{
+﻿@model IEnumerable<WebChatAPP.Data.Models.Message>
+@{
     ViewData["Title"] = "Home Page";
+    var userName = User.Identity.Name;
+}
+<style>
+
+    .helper-tag-italic {
+        text-decoration: none;
+        color: darkgray;
+        font-style: italic;
+        font-weight: 100;
+        margin-bottom: 0px;
+    }
+
+    .helper-tag {
+        text-decoration: none;
+        color: darkgray;
+        font-style: italic;
+        font-weight: 100;
+        margin-bottom: 0px;
+    }
+
+    .helper-tag-bold {
+        text-decoration: none;
+        color: darkgray;
+        font-weight: 500;
+        margin-bottom: 0px;
+    }
+
+    .message-tag {
+        color: black;
+    }
+
+    .my-messages {
+        background-color: darkseagreen;
+        float: right;
+    }
+
+    .received-messages {
+        background-color: khaki;
+        float: left;
+    }
+</style>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                Live Chat !
+            </div>
+            <div class="card-body">
+                <div class="text-center" id="chat">
+                    @if (Model != null)
+                    {
+        @foreach (var message in Model.OrderBy(o => o.MessageDate))
+        {
+
+<div class="row  @if (message.UserName == userName)
+{
+             <text> justify-content-end </text>
+} else {
+    <text> justify-content-start </text>
+} " >
+    <!--add class 'justify-content-start' if is not my message or 'justify-content-end' if is my massage -->
+    <div class="col-lg-3">
+        <span class="helper-tag">
+            @message.UserName
+        </span>
+        <p class="message-tag">
+            @message.Text
+        </p>
+        <span class="helper-tag-italic">
+            @message.MessageDate.ToString()
+        </span>
+    </div>
+</div>
+}
+    }
+                </div>
+                <hr />
+                <div class="form-group">
+                    <input name="Text" class="form-control" id="messageText" />
+                </div>
+                <div class="form-group">
+                    <input type="button" value="Send" id="submitButton" class="btn-success" />
+                </div>
+                <input type="hidden" value="@userName" name="username" />
+            </div>
+        </div>
+    </div>
+</div>
+@if (User.Identity.IsAuthenticated)
+{
+    <script>
+        const userName = "@ViewBag.currentUserName";
+    </script>
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+@section scripts {
+    <script src="~/js/signalr/dist/browser/signalr.min.js"></script>
+    <script src="~/js/chat.js"></script>
+    <script src="~/js/signReqHandler.js"></script>
+
+
+
+}
+
