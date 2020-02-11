@@ -12,12 +12,9 @@ function saveMessageResponse(response) {
 }
 
 function addMessageToChat(message) {
-    let container = $('<div class="row REPLACEME">');
-    let usermessage = (username == message.userName) ? '<text> justify-content-end </text>' : '<text> justify-content-start </text>';
+    let usermessage = (username == message.userName) ? 'justify-content-end' : 'justify-content-start';
+    let container = $('<div class="row ' + usermessage + '">');
     let template = '<div class="col-lg-3">CONTENT</div>';
-    container.append($(usermessage.replace('REPLACEME', usermessage)));
-    container.append($(template.replace('CONTENT', message.userName)));
-    container.append($(template.replace('CONTENT', message.text)));
-    //container.append($(template.replace('CONTENT', message.messageDate)));
+    container.append($(template.replace('CONTENT', '<span class="helper-tag">' + message.userName + '</span>' + '<p class="message-tag">' + message.text + '</p>' + '<span class="helper-tag-italic">' + message.messageDate + '</span>' )));
     $('#chat').append(container);
 }

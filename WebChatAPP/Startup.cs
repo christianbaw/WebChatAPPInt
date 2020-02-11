@@ -12,6 +12,10 @@ using WebChatAPP.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using WebChatAPP.Hubs;
+using WebChatAPP.Data.Models;
+using WebChatAPP.Data.Interfaces;
+using WebChatAPP.Data.Repository;
 
 namespace WebChatAPP
 {
@@ -27,14 +31,29 @@ namespace WebChatAPP
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            //services.AddDbContext<ApplicationDbContext>(options =>
+            //    options.UseSqlServer(
+            //        Configuration.GetConnectionString("DefaultConnection")));
+            //services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            //    .AddEntityFrameworkStores<ApplicationDbContext>();
+            services.AddDbContext<ApplicationDbContext>(
+                  options => options.
+                  UseSqlServer(Configuration.GetConnectionString("DefaultConnection"),
+                  assembly => assembly.MigrationsAssembly("WebChatAPP.Data"))
+              );
+            services.AddScoped<IChatRepository, ChatRepository>();
+            services.AddDefaultIdentity<AppUser>()
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddDefaultTokenProviders()
+            .AddDefaultUI();
+
             services.AddControllersWithViews();
             services.AddRazorPages();
+            services.AddSignalR();
+            
             services.AddMvc();
+            
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -65,7 +84,12 @@ namespace WebChatAPP
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
+                endpoints.MapHub<ChatHub>("/Home/Index");
             });
+
+         
         }
+        
+
     }
 }
