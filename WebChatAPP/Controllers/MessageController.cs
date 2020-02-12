@@ -25,7 +25,12 @@ namespace WebChatAPP.Controllers
                 Text = messageVM.Text
             };
 
-            _repository.insertrecord(message);
+            if (!messageVM.Text.Contains("/stock="))
+            {
+                _repository.insertrecord(message);
+            }
+            
+
             return Ok(new { message.UserName, message.Text, message.MessageDate });
         }
     }

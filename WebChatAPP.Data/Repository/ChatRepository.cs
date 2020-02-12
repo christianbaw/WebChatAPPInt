@@ -30,7 +30,7 @@ namespace WebChatAPP.Data.Repository
 
         public List<Message> getMessages()
         {
-            return _context.Messages.ToList();
+            return _context.Messages.Take(50).OrderBy(o => o.MessageDate).ToList();
         }
 
         public async Task<string> getUserID()
